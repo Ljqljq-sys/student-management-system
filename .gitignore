@@ -1,0 +1,24 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+### Java ###
+*.class
+*.jar
+*.war
+
+### 日志 ###
+*.log
+logs/
+
+### 系统文件 ###
+.DS_Store
+Thumbs.db
+
+### 构建工具（以后用 Maven/Gradle 会用到）###
+target/
+build/
+.gradle/
