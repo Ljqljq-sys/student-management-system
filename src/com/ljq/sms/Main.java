@@ -1,62 +1,51 @@
 package com.ljq.sms;
 
-import com.ljq.sms.dao.StudentDao;
-import com.ljq.sms.dao.StudentDaoFileImpl;
 import com.ljq.sms.entity.Student;
+import com.ljq.sms.exception.DuplicateIdException;
+import com.ljq.sms.exception.StudentNotFoundException;
+import com.ljq.sms.service.StudentService;
+import com.ljq.sms.service.StudentServiceImpl;
 
 public class Main {
     public static void main(String[] args) {
-        StudentDao dao = new StudentDaoFileImpl();
+        StudentService service = new StudentServiceImpl();
 
-        // ========== 1. 添加 3 个学生 ==========
-        dao.add(new Student("2024001", "ljq", 20, "计算机", 85.5));
-        dao.add(new Student("2024002", "李四", 21, "软件工程", 92.0));
-        dao.add(new Student("2024003", "王五", 19, "网络工程", 58.0));
+        System.out.println("=== 1. 添加学生 ===");
+        try {
+            service.addStudent(new Student("2024001", "ljq", 20, "计算机", 85.5));
+            System.out.println("添加成功：2024001");
+        } catch (DuplicateIdException e) {
+            System.out.println("添加失败：" + e.getMessage());
+        }
 
-        // ========== 2. 显示全部 ==========
-        System.out.println("=== 全部学生 ===");
-        for (Student s : dao.findAll()) {
+        // 再添加一次同样的学号 → 应该被拦住
+        System.out.println("\n=== 2. 重复添加同一个学号 ===");
+        try {
+            service.addStudent(new Student("2024001", "张三", 21, "软件", 90.0));
+            System.out.println("添加成功（不应该看到这行！）");
+        } catch (DuplicateIdException e) {
+            System.out.println("添加失败：" + e.getMessage());   // ← 应该看到这行
+        }
+
+        System.out.println("\n=== 3. 查询不存在的学生 ===");
+        try {
+            Student s = service.getStudent("9999999");
+            System.out.println("查到了：" + s);
+        } catch (StudentNotFoundException e) {
+            System.out.println("查询失败：" + e.getMessage());   // ← 应该看到这行
+        }
+
+        System.out.println("\n=== 4. 删除不存在的学生 ===");
+        try {
+            service.deleteStudent("9999999");
+            System.out.println("删除成功（不应该看到这行！）");
+        } catch (StudentNotFoundException e) {
+            System.out.println("删除失败：" + e.getMessage());   // ← 应该看到这行
+        }
+
+        System.out.println("\n=== 5. 当前所有学生 ===");
+        for (Student s : service.getAllStudents()) {
             System.out.println(s);
         }
-
-        // ========== 3. 按学号查 ==========
-        System.out.println("\n=== 查 2024002 ===");
-        System.out.println(dao.findById("2024002"));
-
-        // ========== 4. 修改王五的成绩 ==========
-        Student s = dao.findById("2024003");
-        s.setScore(88.0);
-        dao.update(s);
-
-        // ========== 5. 删除 ljq ==========
-        dao.delete("2024001");
-
-        System.out.println("\n=== 修改 + 删除后 ===");
-        for (Student stu : dao.findAll()) {
-            //把 dao.findAll() 里的每一个元素，依次取出来放进 stu，然后执行循环体，: 读作"in"。
-            System.out.println(stu);
-        }
-        //这个写法与传统写法是一样的效果，但是方便一点
-        /*
-            List<Student> list = dao.findAll();//创造一个list变量去接受findall返回的结果
-            for(int i=0;i<list.size();i++){
-            Student stu = list.get(i);
-            System.out.println(stu);
-        }//注意，不能用这个遍历使用删除方法
-         */
-
-        // ========== 6. 查不存在的学号 ==========
-        System.out.println("\n=== 查 9999999（不存在）===");
-        System.out.println(dao.findById("9999999"));
-
-        // ========== 7. 判断存在 ==========
-        System.out.println("\n=== 2024002 是否存在 ===");
-        System.out.println(dao.existsById("2024002"));
-        System.out.println("=== 9999999 是否存在 ===");
-        System.out.println(dao.existsById("9999999"));
-
-        // ========== 8. 统计一下 ==========
-        System.out.println("\n=== 当前学生总数 ===");
-        System.out.println(dao.findAll().size() + " 人");
     }
 }
