@@ -1,12 +1,12 @@
 package com.ljq.sms;
 
 import com.ljq.sms.dao.StudentDao;
-import com.ljq.sms.dao.StudentDaoImpl;
+import com.ljq.sms.dao.StudentDaoFileImpl;
 import com.ljq.sms.entity.Student;
 
 public class Main {
     public static void main(String[] args) {
-        StudentDao dao = new StudentDaoImpl();
+        StudentDao dao = new StudentDaoFileImpl();
 
         // ========== 1. 添加 3 个学生 ==========
         dao.add(new Student("2024001", "ljq", 20, "计算机", 85.5));
