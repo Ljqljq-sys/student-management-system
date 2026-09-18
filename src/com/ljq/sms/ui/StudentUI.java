@@ -52,11 +52,20 @@ public class StudentUI {
                     // deleteStudent();
                     deleteStudent();
                     break;
+                case 6:
+                    searchByName();
+                    break;
+                case 7:
+                    sortByScore();
+                    break;
+                case 8:
+                    showStatistics();
+                    break;
                 case 0:
                     System.out.println("再见！");
                     return;                 // ⚠️ 用 return 才能真正退出整个方法
                 default:
-                    System.out.println("输入有误，请输入 0~5 之间的数字");
+                    System.out.println("输入有误，请输入 0~8 之间的数字");
             }
         }
     }
@@ -72,6 +81,9 @@ public class StudentUI {
         System.out.println("  3. 显示全部学生");
         System.out.println("  4. 修改学生信息");
         System.out.println("  5. 删除学生");
+        System.out.println("  6. 按姓名搜索");
+        System.out.println("  7. 按成绩排序");
+        System.out.println("  8. 成绩统计");
         System.out.println("  0. 退出系统");
         System.out.println("==================================");
     }
@@ -134,7 +146,10 @@ public class StudentUI {
             System.out.println("✅ 添加成功！");
         } catch (DuplicateIdException e) {
             System.out.println("❌ 添加失败：" + e.getMessage());
+        } catch (IllegalArgumentException e) {              // ← 加这个
+            System.out.println("❌ 添加失败：" + e.getMessage());
         }
+
     }
 
     /**
@@ -232,6 +247,8 @@ public class StudentUI {
             System.out.println("✅ 修改成功！");
         } catch (StudentNotFoundException e) {
             System.out.println("❌ 修改失败：" + e.getMessage());
+        } catch (IllegalArgumentException e) {              // ← 加这个
+            System.out.println("❌ 修改失败：" + e.getMessage());
         }
     }
 
@@ -280,5 +297,60 @@ public class StudentUI {
             }
             System.out.println("输入不能为空，请重新输入");
         }
+    }
+
+    /**
+     * 按姓名模糊搜索
+     */
+    private void searchByName() {
+        System.out.println("\n--- 按姓名搜索 ---");
+        String keyword = readNonEmpty("请输入姓名关键字：");
+
+        List<Student> result = studentService.searchByName(keyword);
+
+        if (result.isEmpty()) {
+            System.out.println("没有找到姓名包含 \"" + keyword + "\" 的学生");
+            return;
+        }
+
+        System.out.println("\n找到 " + result.size() + " 名学生：");
+        System.out.println("----------------------------------------");
+        for (Student s : result) {
+            System.out.println(s);
+        }
+        System.out.println("----------------------------------------");
+    }
+
+    /**
+     * 按成绩排序显示
+     */
+    private void sortByScore() {
+        System.out.println("\n--- 按成绩排序 ---");
+        System.out.println("  1. 从低到高");
+        System.out.println("  2. 从高到低");
+        int choice = readInt("请选择：");
+
+        boolean ascending = (choice == 1);
+        List<Student> list = studentService.sortByScore(ascending);
+
+        if (list.isEmpty()) {
+            System.out.println("暂无学生数据");
+            return;
+        }
+
+        System.out.println("\n" + (ascending ? "成绩从低到高：" : "成绩从高到低："));
+        System.out.println("----------------------------------------");
+        for (Student s : list) {
+            System.out.println(s);
+        }
+        System.out.println("----------------------------------------");
+    }
+
+    /**
+     * 成绩统计
+     */
+    private void showStatistics() {
+        System.out.println("\n--- 成绩统计 ---");
+        System.out.println(studentService.getStatistics());
     }
 }
