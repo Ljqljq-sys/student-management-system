@@ -17,19 +17,28 @@
 ## 技术栈
 
 - Java 17
+- Maven（依赖管理）
+- **MySQL 8.0 + JDBC**  ← 新增
 - 面向对象编程（封装、继承、多态、接口）
-- 集合框架（LinkedHashMap、ArrayList）
-- 文件 IO（BufferedReader / BufferedWriter，UTF-8 编码）
-- 异常处理（自定义 RuntimeException）
-- Java 8 特性（Lambda、方法引用、Comparator、Stream）
+- 集合框架、文件 IO、异常处理
+- Java 8 特性（Lambda、方法引用、Comparator）
 
 ## 项目架构
 
-采用经典三层架构，各层职责分明：
-┌─────────────────────────────────────┐ │ UI 层（StudentUI） │ 菜单交互、输入校验、异常展示 ├─────────────────────────────────────┤ │ Service 层（StudentServiceImpl） │ 业务规则：学号唯一、成绩范围 ├─────────────────────────────────────┤ │ DAO 层（StudentDaoFileImpl） │ 数据存取：读写文件 ├─────────────────────────────────────┤ │ 数据层（data/students.txt） │ 持久化存储 └─────────────────────────────────────┘
-**设计要点：** DAO 层定义了 `StudentDao` 接口，
-调用方只依赖接口不依赖实现，因此更换存储方式（如换成数据库）只需新增实现类，
-上层代码无需改动。
+采用经典三层架构：
+
+UI 层（StudentUI）          菜单交互
+↓
+Service 层（StudentServiceImpl）  业务规则
+↓
+DAO 层                       数据访问（两种实现可切换）
+├── StudentDaoFileImpl   文件存储
+└── StudentDaoDbImpl     MySQL 存储  ← 新增
+↓
+MySQL 数据库 / 文件
+
+**设计要点：** Service 层只依赖 `StudentDao` 接口，不依赖具体实现。
+切换存储方式只需修改 `StudentServiceImpl` 中的一行实例化代码。
 
 ## 项目结构
 

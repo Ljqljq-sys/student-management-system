@@ -1,7 +1,7 @@
 package com.ljq.sms.service;
 
 import com.ljq.sms.dao.StudentDao;
-import com.ljq.sms.dao.StudentDaoFileImpl;
+import com.ljq.sms.dao.StudentDaoDbImpl;
 import com.ljq.sms.entity.Student;
 import com.ljq.sms.exception.DuplicateIdException;
 import com.ljq.sms.exception.StudentNotFoundException;
@@ -17,7 +17,7 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     // Service 持有 Dao，通过它访问数据（这叫"组合"）
-    private final StudentDao studentDao = new StudentDaoFileImpl();
+    private final StudentDao studentDao = new StudentDaoDbImpl();
     //组合**（Composition）—— 一个对象"拥有"另一个对象。
     //StudentServiceImpl 有一个 StudentDao
 
